@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "@fontsource-variable/outfit";
+
+:root {
+  font-family: 'Outfit Variable', system-ui, sans-serif;
+}
