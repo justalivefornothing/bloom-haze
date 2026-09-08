@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { BitGrid } from './components/BitGrid'
 import { Controls } from './components/Controls'
+import { Gauge } from './components/Gauge'
 import { ProbePanel } from './components/ProbePanel'
 import { useFilter } from './hooks/useFilter'
 import { fmtPct } from './lib/format'
@@ -94,7 +95,9 @@ export default function App() {
           />
         </div>
 
-        <div className="flex flex-col gap-5">{/* meter + chart */}</div>
+        <div className="flex flex-col gap-5">
+          <Gauge filter={f.filter} version={f.version} members={f.memberSet} />
+        </div>
       </div>
     </div>
   )

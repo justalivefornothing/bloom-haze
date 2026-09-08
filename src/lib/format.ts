@@ -8,6 +8,12 @@ export function fmtPct(x: number): string {
   return `${p.toFixed(3)}%`
 }
 
+/** Compact percent for ticks and scale ends: 20%, 2.5%, 0.1%. */
+export function fmtTick(x: number): string {
+  const p = x * 100
+  return `${parseFloat(p.toPrecision(3))}%`
+}
+
 export function hex32(n: number): string {
   return '0x' + n.toString(16).padStart(8, '0')
 }
