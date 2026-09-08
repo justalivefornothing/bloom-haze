@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
 import { BitGrid } from './components/BitGrid'
 import { Controls } from './components/Controls'
-import { Gauge } from './components/Gauge'
+import { MeterPanel } from './components/MeterPanel'
 import { ProbePanel } from './components/ProbePanel'
 import { useFilter } from './hooks/useFilter'
-import { fmtPct } from './lib/format'
+import { fmtPct, fmtInt } from './lib/format'
 import { PRESETS, type Preset } from './lib/presets'
 
 export default function App() {
@@ -38,13 +38,13 @@ export default function App() {
         <dl className="flex gap-6 text-sm text-ink-2 sm:text-right">
           <div>
             <dt className="eyebrow">items · n</dt>
-            <dd className="text-2xl font-light tabular-nums text-ink">{n.toLocaleString()}</dd>
+            <dd className="text-2xl font-light tabular-nums text-ink">{fmtInt(n)}</dd>
           </div>
           <div>
             <dt className="eyebrow">bits set</dt>
             <dd className="text-2xl font-light tabular-nums text-ink">
-              {occupied.toLocaleString()}
-              <span className="text-base text-ink-3"> / {f.m.toLocaleString()}</span>
+              {fmtInt(occupied)}
+              <span className="text-base text-ink-3"> / {fmtInt(f.m)}</span>
             </dd>
           </div>
           <div>
@@ -69,12 +69,12 @@ export default function App() {
         }}
       />
 
-      <div className="grid gap-5 lg:grid-cols-3">
-        <div className="flex flex-col gap-5 lg:col-span-2">
+      <div className="grid gap-5 lg:grid-cols-12">
+        <div className="flex flex-col gap-5 lg:col-span-7">
           <section className="card p-5 sm:p-6" aria-label="Bit array">
             <div className="mb-4 flex items-baseline justify-between">
               <h2 className="eyebrow">
-                {f.kind === 'counting' ? '4-bit counters' : 'Bit array'} · m = {f.m.toLocaleString()}
+                {f.kind === 'counting' ? '4-bit counters' : 'Bit array'} · m = {fmtInt(f.m)}
               </h2>
               {f.lastBloom && (
                 <p key={f.lastBloom.id} className="fade-in text-sm text-ink-2">
@@ -95,8 +95,8 @@ export default function App() {
           />
         </div>
 
-        <div className="flex flex-col gap-5">
-          <Gauge filter={f.filter} version={f.version} members={f.memberSet} />
+        <div className="flex flex-col gap-5 lg:col-span-5">
+          <MeterPanel filter={f.filter} version={f.version} members={f.memberSet} onUseK={structural(f.setK)} />
         </div>
       </div>
     </div>

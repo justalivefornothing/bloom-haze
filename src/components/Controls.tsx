@@ -1,4 +1,5 @@
 import { K_MAX, M_STOPS, type Kind } from '../hooks/useFilter'
+import { fmtInt } from '../lib/format'
 import { PRESETS, type Preset } from '../lib/presets'
 
 interface Props {
@@ -43,7 +44,7 @@ export function Controls({ m, k, kind, activePreset, onM, onK, onKind, onPreset,
           <label className="block">
             <span className="flex items-baseline justify-between">
               <span className="eyebrow">m · bits</span>
-              <span className="text-lg font-normal tabular-nums">{m.toLocaleString()}</span>
+              <span className="text-lg font-normal tabular-nums">{fmtInt(m)}</span>
             </span>
             <input
               type="range"

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import type { Kind, Probe } from '../hooks/useFilter'
-import { hex32 } from '../lib/format'
+import { hex32, fmtInt } from '../lib/format'
 
 interface Props {
   kind: Kind
@@ -58,7 +58,7 @@ export function ProbePanel({ kind, items, probe, onAdd, onProbe, onRemove }: Pro
 
       <div className="mt-5">
         <p className="eyebrow mb-2">
-          {items.length === 0 ? 'No items yet' : `${items.length.toLocaleString()} item${items.length === 1 ? '' : 's'}`}
+          {items.length === 0 ? 'No items yet' : `${fmtInt(items.length)} item${items.length === 1 ? '' : 's'}`}
           {kind === 'counting' && items.length > 0 && ' · click × to delete'}
           {kind === 'standard' && items.length > 0 && ' · click to check'}
         </p>
@@ -93,7 +93,7 @@ export function ProbePanel({ kind, items, probe, onAdd, onProbe, onRemove }: Pro
               )
             })}
             {unique.length > SHOWN && (
-              <li className="px-2 py-1 text-sm text-ink-3">and {(unique.length - SHOWN).toLocaleString()} more</li>
+              <li className="px-2 py-1 text-sm text-ink-3">and {fmtInt(unique.length - SHOWN)} more</li>
             )}
           </ul>
         )}

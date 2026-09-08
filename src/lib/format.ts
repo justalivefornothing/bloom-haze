@@ -14,6 +14,11 @@ export function fmtTick(x: number): string {
   return `${parseFloat(p.toPrecision(3))}%`
 }
 
+/** Thousands-separated integer, locale-pinned so the UI reads the same everywhere. */
+export function fmtInt(n: number): string {
+  return Math.round(n).toLocaleString('en-US')
+}
+
 export function hex32(n: number): string {
   return '0x' + n.toString(16).padStart(8, '0')
 }

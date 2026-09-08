@@ -1,10 +1,8 @@
-import type { Filter } from '../lib/bloom'
-import { theoreticalFpRate } from '../lib/bloom'
-import { MAX_PROBES, useFpMeter } from '../hooks/useFpMeter'
-import { fmtPct, fmtTick, niceCeil } from '../lib/format'
+import { MAX_PROBES, type MeterState } from '../hooks/useFpMeter'
+import { fmtPct, fmtTick, niceCeil, fmtInt } from '../lib/format'
 
 const CX = 120
-const CY = 124
+const CY = 128
 const R = 96
 
 function polar(frac: number, r: number): [number, number] {
@@ -19,22 +17,19 @@ function arc(from: number, to: number, r: number): string {
 }
 
 interface Props {
-  filter: Filter
-  version: number
-  members: ReadonlySet<string>
+  meter: MeterState
+  theory: number
+  n: number
 }
 
 /** Semicircular gauge: needle = measured rate, violet tick = theoretical. */
-export function Gauge({ filter, version, members }: Props) {
-  const meter = useFpMeter(filter, version, members)
-  const { m, k, n } = filter
-  const theory = theoreticalFpRate(m, n, k)
+export function Gauge({ meter, theory, n }: Props) {
   const settled = meter.probes >= 500
   const ceil = Math.min(1, niceCeil(Math.max(theory * 1.6, settled ? meter.rate * 1.15 : 0, 0.001)))
   const measuredFrac = Math.min(1, meter.rate / ceil)
   const theoryFrac = Math.min(1, theory / ceil)
-  const [tx0, ty0] = polar(theoryFrac, R - 12)
-  const [tx1, ty1] = polar(theoryFrac, R + 12)
+  const [tx0, ty0] = polar(theoryFrac, R - 10)
+  const [tx1, ty1] = polar(theoryFrac, R + 9)
   const gap = meter.rate - theory
 
   return (
@@ -42,11 +37,11 @@ export function Gauge({ filter, version, members }: Props) {
       <div className="flex items-baseline justify-between">
         <h2 className="eyebrow">False-positive meter</h2>
         <span className="text-xs text-ink-3 tabular-nums" aria-live="off">
-          {meter.probes.toLocaleString()} probes{meter.done ? ' · settled' : n > 0 ? ' · firing' : ''}
+          {fmtInt(meter.probes)} probes{meter.done ? ' · settled' : n > 0 ? ' · firing' : ''}
         </span>
       </div>
 
-      <svg viewBox="0 0 240 150" className="mt-2 w-full" role="img" aria-label={`Measured ${fmtPct(meter.rate)}, theoretical ${fmtPct(theory)}`}>
+      <svg viewBox="0 0 240 154" className="mt-2 w-full" role="img" aria-label={`Measured ${fmtPct(meter.rate)}, theoretical ${fmtPct(theory)}`}>
         {/* track: a lighter step of the same magenta ramp */}
         <path d={arc(0, 1, R)} fill="none" stroke="#f5c6e6" strokeWidth={10} strokeLinecap="round" opacity={0.7} />
         {measuredFrac > 0 && (
@@ -68,7 +63,7 @@ export function Gauge({ filter, version, members }: Props) {
         {/* scale labels */}
         <g fill="#8f83a3" fontSize={9} fontWeight={500} letterSpacing={0.5}>
           <text x={CX - R} y={CY + 16} textAnchor="middle">0</text>
-          <text x={CX} y={CY - R + 26} textAnchor="middle">{fmtTick(ceil / 2)}</text>
+          <text x={CX} y={CY - R - 16} textAnchor="middle">{fmtTick(ceil / 2)}</text>
           <text x={CX + R} y={CY + 16} textAnchor="middle">{fmtTick(ceil)}</text>
         </g>
         {/* needle */}
@@ -101,7 +96,7 @@ export function Gauge({ filter, version, members }: Props) {
           <dd className="mt-1 text-xl font-light tabular-nums text-ink">
             {n === 0 ? '–' : `${gap >= 0 ? '+' : '−'}${fmtPct(Math.abs(gap))}`}
           </dd>
-          <dd className="text-xs text-ink-3">{meter.positives.toLocaleString()} false positives</dd>
+          <dd className="text-xs text-ink-3">{fmtInt(meter.positives)} false positives</dd>
         </div>
       </dl>
 
